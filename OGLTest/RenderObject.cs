@@ -14,14 +14,12 @@ namespace OGLTest
         {
             _verticesCount = vertices.Length;
 
-            // Create Vertex Array here..
-            _vertexArray = GL.GenVertexArray();
-            GL.BindVertexArray(_vertexArray);
-
             _buffer = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, _buffer);
             GL.BufferData(BufferTarget.ArrayBuffer, _verticesCount * Vertex.Size, vertices, BufferUsageHint.StaticDraw);
 
+            _vertexArray = GL.GenVertexArray();
+            GL.BindVertexArray(_vertexArray);
             // Tell the shaders how the data is layed out
             // 1. Position
             GL.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, Vertex.Size, 0);

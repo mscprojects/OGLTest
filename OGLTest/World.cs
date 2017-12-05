@@ -11,39 +11,30 @@ namespace OGLTest
 {
     class World
     {
-        private List<IBlock> _blocks = new List<IBlock>();
+        private List<Chunk> _chunks = new List<Chunk>();
         private RenderObject _blockRenderObject;
-        private TextureManager _textureManager = new TextureManager();
+        private TextureAtlas _textureAtlas;
 
         public World()
         {
-            _blockRenderObject = new RenderObject(BlockVertices.Vertices.ToArray());
+            _textureAtlas = new TextureAtlas(@"textures\blocks\");
 
-            var random = new Random();
-            for (int i = 0; i < 100; i++)
-            {
-                for (int j = 0; j < 100; j++)
-                {
-                    if (random.NextDouble() < 0.5)
-                        _blocks.Add(new DirtBlock(i, 0, j));
-                    else 
-                        _blocks.Add(new SandBlock(i, 0, j));
-                }
-            }
+            _chunks.Add(new Chunk(Vector3.Zero, _textureAtlas));
+
+            _chunks.Add(new Chunk(Vector3.Zero + Vector3.UnitX, _textureAtlas));
+            _chunks.Add(new Chunk(Vector3.Zero + Vector3.UnitY, _textureAtlas));
+            _chunks.Add(new Chunk(Vector3.Zero + Vector3.UnitZ, _textureAtlas));
+
+            _chunks.Add(new Chunk(Vector3.Zero - Vector3.UnitX, _textureAtlas));
+            _chunks.Add(new Chunk(Vector3.Zero - Vector3.UnitY, _textureAtlas));
+            _chunks.Add(new Chunk(Vector3.Zero - Vector3.UnitZ, _textureAtlas));
         }
 
         public void Render(ShaderProgram program)
         {
-            foreach (var block in _blocks)
+            foreach (var chunk in _chunks)
             {
-                Texture blockTexture = _textureManager.getTexture(block.texture());
-                blockTexture.Bind(TextureUnit.Texture0);
-
-                Matrix4 modelMatrix = Matrix4.Identity;
-                modelMatrix *= Matrix4.CreateTranslation(block.position());
-                program.setMat4("model", modelMatrix);
-
-                _blockRenderObject.Render();
+                chunk.Render();
             }
         }
     }

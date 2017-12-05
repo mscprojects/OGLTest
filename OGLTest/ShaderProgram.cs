@@ -57,6 +57,11 @@ namespace OGLTest
             GL.Uniform1(location, i);
         }
 
+        public void setMat4(int location, Matrix4 mat4)
+        {
+            GL.UniformMatrix4(location, false, ref mat4);
+        }
+
         public void setMat4(string uniformName, Matrix4 mat4)
         {
             var location = GL.GetUniformLocation(_program, uniformName);

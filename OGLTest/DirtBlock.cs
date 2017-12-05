@@ -9,42 +9,96 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace OGLTest
 {
-    class SandBlock : IBlock
+    class AirBlock : IBlock
     {
-        private Vector3 _position;
-
-        public SandBlock(int x, int y, int z)
+        public bool render()
         {
-            _position = new Vector3(x, y, z);
+            return false;
         }
+
         public string texture()
         {
-            return @"textures\blocks\sand.png";
+            throw new NotImplementedException();
         }
 
-        public Vector3 position()
+        public Color4 color()
         {
-            return _position;
+            throw new NotImplementedException();
+        }
+    }
+
+    class SandBlock : IBlock
+    {
+        private Color4 _color;
+
+        public SandBlock()
+        {
+            _color = new Color4(255, 255, 0, 255);
+        }
+
+        public bool render()
+        {
+            return true;
+        }
+
+        public string texture()
+        {
+            return "sand.png";
+        }
+
+        public Color4 color()
+        {
+            return _color;
         }
     }
 
     class DirtBlock : IBlock
     {
-        private Vector3 _position;
+        private Color4 _color;
 
-        public DirtBlock(int x, int y, int z)
+        public DirtBlock()
         {
-            _position = new Vector3(x, y, z);
+            _color = new Color4(0, 0, 255, 255);
+        }
+
+        public bool render()
+        {
+            return true;
         }
 
         public string texture()
         {
-            return @"textures\blocks\dirt.png";
+            return "dirt.png";
         }
 
-        public Vector3 position()
+        public Color4 color()
         {
-            return _position;
+            return _color;
+        }
+    }
+
+    class StoneBrickBlock : IBlock
+    {
+        private Color4 _color;
+
+        public StoneBrickBlock()
+        {
+            _color = new Color4(0, 0, 255, 255);
+        }
+
+        public bool render()
+        {
+            return true;
+        }
+
+        public string texture()
+        {
+            return "stonebrick.png";
+        }
+
+        public Color4 color()
+        {
+            return _color;
         }
     }
 }

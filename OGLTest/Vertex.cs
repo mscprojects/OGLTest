@@ -10,15 +10,15 @@ namespace OGLTest
             + 4 * 4 
             + 2 * 4;
 
-        private readonly Vector4 _position;
-        private readonly Color4 _color;
-        private readonly Vector2 _textureCoordinations;
+        public Vector4 _position;
+        public Color4 _color;
+        public Vector2 _textureCoordinates;
 
-        public Vertex(Vector4 position, Color4 color, Vector2 textureCoordinations)
+        public Vertex(Vector4 position, Color4 color, Vector2 textureCoordinates)
         {
             _position = position;
             _color = color;
-            _textureCoordinations = textureCoordinations;
+            _textureCoordinates = textureCoordinates;
         }
     }
 }

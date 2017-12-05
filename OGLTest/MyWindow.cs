@@ -13,7 +13,7 @@ namespace OGLTest
     class MyWindow : GameWindow
     {
         private ShaderProgram _program;
-        private Camera _camera;
+        private Player _player;
         private World _world;
 
         private const int _width = 800;
@@ -23,7 +23,8 @@ namespace OGLTest
             : base(_width, _height, GraphicsMode.Default, "openGL test", GameWindowFlags.Default,
                 DisplayDevice.Default, 4, 5, GraphicsContextFlags.Debug)
         {
-            _camera = new Camera(_width, _height);
+            var playerCamera = new Camera(_width, _height);
+            _player = new Player(playerCamera);
         }
 
         private static void MessageHandler(DebugSource source, DebugType type, int id, DebugSeverity severity, int length, IntPtr message, IntPtr userParam)
@@ -35,19 +36,17 @@ namespace OGLTest
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            HandleInput();
-        }
 
-        private void HandleInput()
-        {
             var keyState = Keyboard.GetState();
             var mouseState = Mouse.GetState();
             if (keyState.IsKeyDown(Key.Escape))
             {
                 Exit();
             }
-            _camera.HandleKeyboard(keyState);
-            _camera.HandleMouse(mouseState);
+
+            _player.HandleKeyboard(keyState);
+            _player.HandleMouse(mouseState);
+            _player.Update(e.Time);
         }
 
         public override void Exit()
@@ -98,8 +97,9 @@ namespace OGLTest
 
             _program.SetInteger("texture0", 0);
 
-            _program.setMat4("view", _camera.ViewMatrix);
-            _program.setMat4("projection", _camera.ProjectionMatrix);
+            _program.setMat4("view", _player.Camera.ViewMatrix);
+            _program.setMat4("projection", _player.Camera.ProjectionMatrix);
+            _program.setMat4("model", Matrix4.Identity);
 
             _world.Render(_program);
 

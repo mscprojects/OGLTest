@@ -1,10 +1,12 @@
 ﻿using OpenTK;
+using OpenTK.Graphics;
 
 namespace OGLTest
 {
     internal interface IBlock
     {
+        bool render();
         string texture();
-        Vector3 position();
+        Color4 color();
     }
 }
