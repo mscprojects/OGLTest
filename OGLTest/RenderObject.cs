@@ -22,14 +22,17 @@ namespace OGLTest
             GL.BindVertexArray(_vertexArray);
             // Tell the shaders how the data is layed out
             // 1. Position
-            GL.VertexAttribPointer(0, 4, VertexAttribPointerType.Float, false, Vertex.Size, 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, Vertex.Size, 0);
             GL.EnableVertexAttribArray(0);
-            // 2. Color
-            GL.VertexAttribPointer(1, 4, VertexAttribPointerType.Float, false, Vertex.Size, 16);
+            // 2. Normal
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, Vertex.Size, 12);
             GL.EnableVertexAttribArray(1);
-            // 3. Texture Coordinations
-            GL.VertexAttribPointer(2, 2, VertexAttribPointerType.Float, false, Vertex.Size, 32);
+            // 3. Color
+            GL.VertexAttribPointer(2, 4, VertexAttribPointerType.Float, false, Vertex.Size, 24);
             GL.EnableVertexAttribArray(2);
+            // 4. Texture Coordinations
+            GL.VertexAttribPointer(3, 2, VertexAttribPointerType.Float, false, Vertex.Size, 40);
+            GL.EnableVertexAttribArray(3);
 
             _initialized = true;
         }

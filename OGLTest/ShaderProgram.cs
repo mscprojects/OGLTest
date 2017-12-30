@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
 
 namespace OGLTest
@@ -66,6 +67,12 @@ namespace OGLTest
         {
             var location = GL.GetUniformLocation(_program, uniformName);
             GL.UniformMatrix4(location, false, ref mat4);
+        }
+
+        public void setVec3(string uniformName, Vector3 vec3)
+        {
+            var location = GL.GetUniformLocation(_program, uniformName);
+            GL.Uniform3(location, vec3);
         }
     }
 }

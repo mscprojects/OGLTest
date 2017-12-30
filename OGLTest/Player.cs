@@ -21,15 +21,15 @@ namespace OGLTest
 
     class Player
     {
-        public Camera Camera { get; }
+        private Vector3 GravityAcceleration = -Vector3.UnitY * 9.81f * 0f;
 
         private const float PlayerSpeed = 20.0f;
         private const float MouseSensitivity = 0.2f;
 
-        private Vector3 GravityAcceleration = -Vector3.UnitY * 9.81f * 0f;
+        public Camera Camera { get; }
+        public Vector3 Position { get; private set; } = new Vector3(-5, 28, 8);
 
         private PlayerState _playerState;
-        private Vector3 _position = new Vector3(-5, 28, 8);
         private Vector3 _physicsVelocity = Vector3.Zero;
 
         private Vector2 _angles = Vector2.Zero;
@@ -49,7 +49,7 @@ namespace OGLTest
                 _physicsVelocity += GravityAcceleration * (float) frameTime;
 
             Vector3 velocity = GetMovingVelocity() + _physicsVelocity;
-            _position += velocity * (float) frameTime;
+            Position += velocity * (float) frameTime;
 
             UpdateCamera();
         }
@@ -104,14 +104,14 @@ namespace OGLTest
 
         private void UpdateCamera()
         {
-            Console.WriteLine($"Player position: {_position}, angles: {_angles}");
+            Console.WriteLine($"Player position: {Position}, angles: {_angles}");
 
             _viewDirection.X = Utils.Cos(_angles.Y) * Utils.Cos(_angles.X);
             _viewDirection.Y = Utils.Sin(_angles.Y);
             _viewDirection.Z = Utils.Cos(_angles.Y) * Utils.Sin(_angles.X);
             _viewDirection.Normalize();
 
-            Camera.UpdateViewMatrix(_position, _viewDirection, _up);
+            Camera.UpdateViewMatrix(Position, _viewDirection, _up);
         }
     }
 }

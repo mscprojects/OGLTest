@@ -20,22 +20,10 @@ namespace OGLTest
         {
             throw new NotImplementedException();
         }
-
-        public Color4 color()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     class SandBlock : IBlock
     {
-        private Color4 _color;
-
-        public SandBlock()
-        {
-            _color = new Color4(255, 255, 0, 255);
-        }
-
         public bool render()
         {
             return true;
@@ -45,22 +33,10 @@ namespace OGLTest
         {
             return "sand.png";
         }
-
-        public Color4 color()
-        {
-            return _color;
-        }
     }
 
     class DirtBlock : IBlock
     {
-        private Color4 _color;
-
-        public DirtBlock()
-        {
-            _color = new Color4(0, 0, 255, 255);
-        }
-
         public bool render()
         {
             return true;
@@ -69,11 +45,6 @@ namespace OGLTest
         public string texture()
         {
             return "dirt.png";
-        }
-
-        public Color4 color()
-        {
-            return _color;
         }
     }
 

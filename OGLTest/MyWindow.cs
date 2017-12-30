@@ -72,7 +72,6 @@ namespace OGLTest
             GL.DebugMessageCallback(MessageHandler, IntPtr.Zero);
 
             GL.ClearColor(Color4.Black);
-            GL.Enable(EnableCap.DepthTest);
 
             _program = new ShaderProgram();
             _program.AddShader(ShaderType.VertexShader, File.ReadAllText("vertex.s"));
@@ -80,10 +79,15 @@ namespace OGLTest
             _program.LinkProgram();
 
             _world = new World();
-            
-            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
+
             GL.PatchParameter(PatchParameterInt.PatchVertices, 3);
+
+            _lightningCube = new DebugDrawCube(_lightSource, _lightSource + Vector3.One);
         }
+
+        private Vector3 _lightSource = new Vector3(50, 100, 0);
+        private Vector3 _lightColor = new Vector3(1, 1, 1);
+        private DebugDrawCube _lightningCube;
 
         protected override void OnRenderFrame(FrameEventArgs e)
         {
@@ -94,14 +98,22 @@ namespace OGLTest
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             _program.Use();
-
-            _program.SetInteger("texture0", 0);
-
+            
             _program.setMat4("view", _player.Camera.ViewMatrix);
             _program.setMat4("projection", _player.Camera.ProjectionMatrix);
             _program.setMat4("model", Matrix4.Identity);
 
+            _program.setVec3("light_color", _lightColor);
+            _program.setVec3("light_position", _lightSource);
+            _program.setVec3("camera_position", _player.Position);
+
+            GL.Enable(EnableCap.DepthTest);
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             _world.Render(_program);
+
+            GL.Disable(EnableCap.DepthTest);
+            GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            _lightningCube.Render();
 
             SwapBuffers();
         }

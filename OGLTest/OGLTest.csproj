@@ -61,10 +61,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BlockRenderer.cs" />
-    <Compile Include="BlockVertices.cs" />
+    <Compile Include="CubeMesh.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="Chunk.cs" />
+    <Compile Include="DebugBox.cs" />
     <Compile Include="DirtBlock.cs" />
     <Compile Include="IBlock.cs" />
     <Compile Include="Utils.cs" />

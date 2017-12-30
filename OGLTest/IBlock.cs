@@ -7,6 +7,5 @@ namespace OGLTest
     {
         bool render();
         string texture();
-        Color4 color();
     }
 }

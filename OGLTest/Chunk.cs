@@ -6,116 +6,128 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace OGLTest
 {
-    class Chunk
+  class Chunk
+  {
+    private const int CHUNK_SIZE = 16;
+    private IBlock[,,] _blocks = new IBlock[CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE];
+
+    private Vector3 _chunkPosition;
+    private RenderObject _renderObject;
+    private TextureAtlas _textureAtlas;
+
+    public Chunk(Vector3 position, TextureAtlas textureAtlas)
     {
-        private const int CHUNK_SIZE = 30;
-        private IBlock[,,] _blocks = new IBlock[CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE];
+      _textureAtlas = textureAtlas;
+      _chunkPosition = position * CHUNK_SIZE;
 
-        private Vector3 _chunkPosition;
-        private RenderObject _renderObject;
-        private TextureAtlas _textureAtlas;
-
-        public Chunk(Vector3 position, TextureAtlas textureAtlas)
+      var random = new Random();
+      for (int x = 0; x < CHUNK_SIZE; x++)
+      {
+        for (int y = 0; y < CHUNK_SIZE; y++)
         {
-            _textureAtlas = textureAtlas;
-            _chunkPosition = position * CHUNK_SIZE;
-
-            var random = new Random();
-            for (int x = 0; x < CHUNK_SIZE; x++)
-            {
-                for (int y = 0; y < CHUNK_SIZE; y++)
-                {
-                    for (int z = 0; z < CHUNK_SIZE; z++)
-                    {
-                        if (random.NextDouble() < 0.3)
-                            _blocks[x, y, z] = new DirtBlock();
-                        else if (random.NextDouble() < 1.0)
-                            _blocks[x, y, z] = new StoneBrickBlock();
-                        else
-                            _blocks[x, y, z] = new AirBlock();
-                    }
-                }
-            }
-
-            createRenderObject();
+          for (int z = 0; z < CHUNK_SIZE; z++)
+          {
+            if (random.NextDouble() < 0.3)
+              _blocks[x, y, z] = new DirtBlock();
+            else if (random.NextDouble() < 1.0)
+              _blocks[x, y, z] = new StoneBrickBlock();
+            else
+              _blocks[x, y, z] = new AirBlock();
+          }
         }
+      }
 
-        bool shouldRenderBlock(int x, int y, int z)
-        {
-            if (!_blocks[x, y, z].render())
-                return false;
-
-            if (x == 0 || x == CHUNK_SIZE - 1 ||
-                y == 0 || y == CHUNK_SIZE - 1 ||
-                z == 0 || z == CHUNK_SIZE - 1)
-                return true;
-
-            if (!_blocks[x + 1, y, z].render())
-                return true;
-            if (!_blocks[x - 1, y, z].render())
-                return true;
-
-            if (!_blocks[x, y + 1, z].render())
-                return true;
-            if (!_blocks[x, y - 1, z].render())
-                return true;
-
-            if (!_blocks[x, y, z + 1].render())
-                return true;
-            if (!_blocks[x, y, z - 1].render())
-                return true;
-
-            return false;
-        }
-
-        List<Vertex> createCubeVertices(int x, int y, int z)
-        {
-            List<Vertex> cubeVertices = new List<Vertex>();
-
-            IBlock block = _blocks[x, y, z];
-
-            if (!shouldRenderBlock(x, y, z))
-            {
-                return cubeVertices;
-            }
-
-            BlockRenderer blockRenderer = new BlockRenderer(_textureAtlas, block);
-            cubeVertices = blockRenderer.CreateMesh();
-
-            for (int i = 0; i < cubeVertices.Count; i++)
-            {
-                Vertex cubeVertex = cubeVertices[i];
-                cubeVertex._position += new Vector4(_chunkPosition);
-                cubeVertex._position += new Vector4(x, y, z, 1.0f);
-                cubeVertices[i] = cubeVertex;
-            }
-
-            return cubeVertices;
-        }
-
-        private void createRenderObject()
-        {
-            List<Vertex> chunkVertices = new List<Vertex>();
-
-            for (int x = 0; x < CHUNK_SIZE; x++)
-            {
-                for (int y = 0; y < CHUNK_SIZE; y++)
-                {
-                    for (int z = 0; z < CHUNK_SIZE; z++)
-                    {
-                        var cubeVertices = createCubeVertices(x, y, z);
-                        chunkVertices.AddRange(cubeVertices);
-                    }
-                }
-            }
-
-            _renderObject = new RenderObject(chunkVertices.ToArray());
-        }
-
-        public void Render()
-        {
-            _textureAtlas.Bind(TextureUnit.Texture0);
-            _renderObject.Render();
-        }
+      CreateRenderObject();
     }
+
+    bool shouldRenderBlock(int x, int y, int z)
+    {
+      if (!_blocks[x, y, z].render())
+        return false;
+
+      if (x == 0 || x == CHUNK_SIZE - 1 ||
+          y == 0 || y == CHUNK_SIZE - 1 ||
+          z == 0 || z == CHUNK_SIZE - 1)
+        return true;
+
+      if (!_blocks[x + 1, y, z].render())
+        return true;
+      if (!_blocks[x - 1, y, z].render())
+        return true;
+
+      if (!_blocks[x, y + 1, z].render())
+        return true;
+      if (!_blocks[x, y - 1, z].render())
+        return true;
+
+      if (!_blocks[x, y, z + 1].render())
+        return true;
+      if (!_blocks[x, y, z - 1].render())
+        return true;
+
+      return false;
+    }
+
+    IBlock GetBlock(int x, int y, int z)
+    {
+      if (x < 0 || x >= CHUNK_SIZE ||
+          y < 0 || y >= CHUNK_SIZE ||
+          z < 0 || z >= CHUNK_SIZE)
+        return new AirBlock();
+      
+      return _blocks[x, y, z];
+    }
+
+    List<Vertex> CreateCubeVertices(int x, int y, int z)
+    {
+      var block = GetBlock(x, y, z);
+
+      if (!block.render())
+      {
+        return new List<Vertex>();
+      }
+
+      var cubeMesh = new CubeMesh
+      {
+        TextureCoordinates = _textureAtlas.GetTextureCoordinates(block.texture()),
+        Position = _chunkPosition + new Vector3(x, y, z)
+      };
+
+      cubeMesh.IncludeFaces.Top = !GetBlock(x, y + 1, z).render();
+      cubeMesh.IncludeFaces.Bottom = !GetBlock(x, y - 1, z).render();
+
+      cubeMesh.IncludeFaces.Front = !GetBlock(x, y, z - 1).render();
+      cubeMesh.IncludeFaces.Back = !GetBlock(x, y, z + 1).render();
+
+      cubeMesh.IncludeFaces.Right = !GetBlock(x + 1, y, z).render();
+      cubeMesh.IncludeFaces.Left = !GetBlock(x - 1, y, z).render();
+
+      return cubeMesh.CreateMesh();
+    }
+
+    private void CreateRenderObject()
+    {
+      List<Vertex> chunkVertices = new List<Vertex>();
+
+      for (int x = 0; x < CHUNK_SIZE; x++)
+      {
+        for (int y = 0; y < CHUNK_SIZE; y++)
+        {
+          for (int z = 0; z < CHUNK_SIZE; z++)
+          {
+            var cubeVertices = CreateCubeVertices(x, y, z);
+            chunkVertices.AddRange(cubeVertices);
+          }
+        }
+      }
+
+      _renderObject = new RenderObject(chunkVertices.ToArray());
+    }
+
+    public void Render()
+    {
+      _textureAtlas.Bind(TextureUnit.Texture0);
+      _renderObject.Render();
+    }
+  }
 }

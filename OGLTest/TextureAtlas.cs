@@ -14,7 +14,8 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace OGLTest
 {
-    struct TextureAtlasCoordinates
+    // For mapping a texture onto a rectangle
+    struct TextureCoordinates
     {
         public float uLeft;
         public float vTop;
@@ -25,7 +26,7 @@ namespace OGLTest
 
     class TextureAtlas
     {
-        private Dictionary<string, TextureAtlasCoordinates> _textureDictionary = new Dictionary<string, TextureAtlasCoordinates>();
+        private Dictionary<string, TextureCoordinates> _textureDictionary = new Dictionary<string, TextureCoordinates>();
 
         private int[] _pixels;
         private int _pixelWidth, _pixelHeight;
@@ -60,10 +61,9 @@ namespace OGLTest
                     currentRow++;
                 }
             }
-
             _texture = new Texture(_pixels, _pixelWidth, _pixelHeight);
 
-            // saveTextureAtlas();
+            saveTextureAtlas();
         }
 
         private void setPixel(int x, int y, int color)
@@ -106,20 +106,20 @@ namespace OGLTest
             string fileName = Path.GetFileName(file);
             Point topLeft = new Point(columnStart, rowStart);
             Point bottomRight = new Point(columnStart + 256, rowStart + 256);
-            _textureDictionary[fileName] = createUVCoordinates(topLeft, bottomRight);
+            _textureDictionary[fileName] = CreateUVCoordinates(topLeft, bottomRight);
 
             return true;
         }
 
-        private TextureAtlasCoordinates createUVCoordinates(Point topLeft, Point bottomRight)
+        private TextureCoordinates CreateUVCoordinates(Point topLeft, Point bottomRight)
         {
-            return new TextureAtlasCoordinates()
+            return new TextureCoordinates()
             {
-                uLeft = (float) topLeft.X / _pixelWidth,
-                vTop = (float) topLeft.Y / _pixelHeight,
+                uLeft = (float)topLeft.X / _pixelWidth,
+                vTop = (float)topLeft.Y / _pixelHeight,
 
-                uRight = (float) bottomRight.X / _pixelWidth,
-                vBottom = (float) bottomRight.Y / _pixelHeight
+                uRight = (float)bottomRight.X / _pixelWidth,
+                vBottom = (float)bottomRight.Y / _pixelHeight
             };
         }
 
@@ -137,7 +137,7 @@ namespace OGLTest
             bm.Save("J:\\hello.png");
         }
 
-        public TextureAtlasCoordinates GetTextureCoordinates(string texture)
+        public TextureCoordinates GetTextureCoordinates(string texture)
         {
             return _textureDictionary[texture];
         }
