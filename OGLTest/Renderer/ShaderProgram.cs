@@ -7,7 +7,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace OGLTest
 {
-    internal class ShaderProgram
+  public class ShaderProgram
     {
         private readonly List<int> _usedShaders = new List<int>();
         private readonly int _program;

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,7 +20,7 @@ namespace OGLTest
 
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba,
                             width, height, 0,
-                            OpenTK.Graphics.OpenGL4.PixelFormat.Bgra, PixelType.UnsignedByte, data);
+                            PixelFormat.Bgra, PixelType.UnsignedByte, data);
 
             GL.TextureParameter(_textureID, TextureParameterName.TextureMinFilter, (int) TextureMinFilter.Linear);
             GL.TextureParameter(_textureID, TextureParameterName.TextureMagFilter, (int) TextureMagFilter.Linear);

@@ -6,9 +6,9 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace OGLTest
 {
-  class Chunk
+  public class Chunk
   {
-    private const int CHUNK_SIZE = 16;
+    public const int CHUNK_SIZE = 16;
     private IBlock[,,] _blocks = new IBlock[CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE];
 
     private Vector3 _chunkPosition;
@@ -29,7 +29,7 @@ namespace OGLTest
           {
             if (random.NextDouble() < 0.3)
               _blocks[x, y, z] = new DirtBlock();
-            else if (random.NextDouble() < 1.0)
+            else if (random.NextDouble() < 0.6)
               _blocks[x, y, z] = new StoneBrickBlock();
             else
               _blocks[x, y, z] = new AirBlock();
@@ -74,7 +74,7 @@ namespace OGLTest
           y < 0 || y >= CHUNK_SIZE ||
           z < 0 || z >= CHUNK_SIZE)
         return new AirBlock();
-      
+
       return _blocks[x, y, z];
     }
 
@@ -128,6 +128,20 @@ namespace OGLTest
     {
       _textureAtlas.Bind(TextureUnit.Texture0);
       _renderObject.Render();
+    }
+
+    public IBlock BlockAtPosition(Vector3 pos)
+    {
+      Vector3 blockOffset = pos - _chunkPosition;
+
+      return _blocks[(int)blockOffset.X, (int)blockOffset.Y, (int)blockOffset.Z];
+    }
+
+    public void DestroyBlock(Vector3 pos)
+    {
+      Vector3 blockOffset = pos - _chunkPosition;
+      _blocks[(int)blockOffset.X, (int)blockOffset.Y, (int)blockOffset.Z] = new AirBlock();
+      CreateRenderObject();
     }
   }
 }
