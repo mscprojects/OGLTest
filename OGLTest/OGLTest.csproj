@@ -70,6 +70,7 @@
     <Compile Include="Engine\BlockController.cs" />
     <Compile Include="Engine\CollisionController.cs" />
     <Compile Include="Engine\Light.cs" />
+    <Compile Include="Engine\WorldPosition.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="Renderer\CubeMap.cs" />
     <Compile Include="Renderer\CubeMesh.cs" />

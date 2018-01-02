@@ -53,14 +53,14 @@ namespace OGLTest
       var ray = new Ray(Position + new Vector3(0, CameraHeight, 0), _viewDirection);
       if (_collisionController.CollidesWithWorld(ray, 5.0f, out var hit))
       {
-        hit = Utils.TruncateComponents(hit);
-        DebugDrawManager.AddElement(new DebugDrawCube(hit, hit + new Vector3(1.0f)), 100);
+        var worldPos = new WorldPosition(hit);
+        DebugDrawManager.AddElement(new DebugDrawCube(worldPos.BBox(Vector3.One)), 100);
 
         if (_playerState.Attack1)
         {
           if (!_blockDestoryCooldown.IsRunning)
           {
-            _blockController.DestroyBlock(hit);
+            _blockController.DestroyBlock(worldPos);
             _blockDestoryCooldown.Start();
           }
           else

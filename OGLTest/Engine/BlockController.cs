@@ -1,3 +1,4 @@
+using OGLTest.Engine;
 using OpenTK;
 
 namespace OGLTest
@@ -11,7 +12,7 @@ namespace OGLTest
       _world = world;
     }
 
-    public void DestroyBlock(Vector3 pos)
+    public void DestroyBlock(WorldPosition pos)
     {
       _world.DestroyBlock(pos);
     }

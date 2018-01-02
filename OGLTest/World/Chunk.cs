@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OGLTest.Engine;
 using OGLTest.Utilities;
 using OpenTK;
 using OpenTK.Graphics;
@@ -14,15 +15,15 @@ namespace OGLTest
     public const int CHUNK_SIZE = 8;
     private IBlock[,,] _blocks = new IBlock[CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE];
 
-    private Vector3 _chunkPosition;
+    private WorldPosition _chunkPosition;
     private RenderObject _renderObject;
     private TextureAtlas _textureAtlas;
 
-    public Chunk(Vector3 position, TextureAtlas textureAtlas, LightController lightController)
+    public Chunk(WorldPosition position, TextureAtlas textureAtlas, LightController lightController)
     {
       _textureAtlas = textureAtlas;
       _lightController = lightController;
-      _chunkPosition = position * CHUNK_SIZE;
+      _chunkPosition = position;
 
       var random = new Random();
       for (int x = 0; x < CHUNK_SIZE; x++)
@@ -92,7 +93,7 @@ namespace OGLTest
       var cubeMesh = new CubeMesh
       {
         TextureCoordinates = _textureAtlas.GetTextureCoordinates(block.texture()),
-        Position = _chunkPosition + new Vector3(x, y, z)
+        Position = (_chunkPosition + new WorldPosition(x, y, z)).AsVector3()
       };
 
       // Only Render faces when they are visible
@@ -132,17 +133,16 @@ namespace OGLTest
       _renderObject.Render();
     }
 
-    public IBlock BlockAtPosition(Vector3 pos)
+    public IBlock BlockAtPosition(WorldPosition pos)
     {
-      Vector3 blockOffset = pos - _chunkPosition;
-
-      return _blocks[(int)blockOffset.X, (int)blockOffset.Y, (int)blockOffset.Z];
+      var blockOffset = pos - _chunkPosition;
+      return _blocks[blockOffset.X, blockOffset.Y, blockOffset.Z];
     }
 
-    public void DestroyBlock(Vector3 pos)
+    public void DestroyBlock(WorldPosition pos)
     {
-      Vector3 blockOffset = pos - _chunkPosition;
-      _blocks[(int)blockOffset.X, (int)blockOffset.Y, (int)blockOffset.Z] = new AirBlock();
+      var blockOffset = pos - _chunkPosition;
+      _blocks[blockOffset.X, blockOffset.Y, blockOffset.Z] = new AirBlock();
       CreateRenderObject();
     }
   }

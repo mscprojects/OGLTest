@@ -19,7 +19,7 @@ namespace OGLTest
     public bool CollidesWithWorld(BBox bbox)
     {
       var bboxPts = bbox.GetPoints();
-      var bboxBlocks = new List<IBlock>(bboxPts.Select(pt => _world.BlockAtPosition(pt)));
+      var bboxBlocks = new List<IBlock>(bboxPts.Select(pt => _world.BlockAtPosition(new WorldPosition(pt))));
 
       return bboxBlocks.Any(b => b.render());
     }
@@ -30,7 +30,7 @@ namespace OGLTest
 
       foreach (var point in pointsOnRay)
       {
-        var blockAtPosition = _world.BlockAtPosition(point);
+        var blockAtPosition = _world.BlockAtPosition(new WorldPosition(point));
         if (blockAtPosition.render())
         {
           hit = point;

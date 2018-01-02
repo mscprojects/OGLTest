@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using OGLTest.Engine;
 using OGLTest.Utilities;
 using OpenTK;
 using OpenTK.Graphics;
@@ -13,7 +14,7 @@ namespace OGLTest
 {
   public class World
   {
-    private Dictionary<Vector3, Chunk> _chunkDictionary = new Dictionary<Vector3, Chunk>();
+    private Dictionary<WorldPosition, Chunk> _chunkDictionary = new Dictionary<WorldPosition, Chunk>();
     private LightController _lightController;
     private TextureAtlas _textureAtlas;
 
@@ -29,7 +30,7 @@ namespace OGLTest
         Color = Color4.White
       });
 
-      AddChunk(Vector3.Zero);
+      AddChunk(new WorldPosition(Vector3.Zero));
 
       //AddChunk(Vector3.Zero + Vector3.UnitX);
       //AddChunk(Vector3.Zero + Vector3.UnitY);
@@ -48,20 +49,19 @@ namespace OGLTest
       }
     }
 
-    public Chunk ChunkAtPosition(Vector3 pos)
+    public Chunk ChunkAtPosition(WorldPosition pos)
     {
-      Vector3 chunkPos = new Vector3(
-        Utils.Floor(pos.X / Chunk.CHUNK_SIZE),
-        Utils.Floor(pos.Y / Chunk.CHUNK_SIZE),
-        Utils.Floor(pos.Z / Chunk.CHUNK_SIZE));
+      pos.X = pos.X / Chunk.CHUNK_SIZE;
+      pos.Y = pos.Y / Chunk.CHUNK_SIZE;
+      pos.Z = pos.Z / Chunk.CHUNK_SIZE;
 
-      if (!_chunkDictionary.ContainsKey(chunkPos))
+      if (!_chunkDictionary.ContainsKey(pos))
         return null;
 
-      return _chunkDictionary[chunkPos];
+      return _chunkDictionary[pos];
     }
 
-    public IBlock BlockAtPosition(Vector3 pos)
+    public IBlock BlockAtPosition(WorldPosition pos)
     {
       var chunk = ChunkAtPosition(pos);
 
@@ -71,14 +71,14 @@ namespace OGLTest
       return chunk.BlockAtPosition(pos);
     }
 
-    private void AddChunk(Vector3 pos)
+    private void AddChunk(WorldPosition pos)
     {
       var chunk = new Chunk(pos, _textureAtlas, _lightController);
       _chunkDictionary[pos] = chunk;
       chunk.CreateRenderObject();
     }
 
-    public void DestroyBlock(Vector3 pos)
+    public void DestroyBlock(WorldPosition pos)
     {
       var chunk = ChunkAtPosition(pos);
 
