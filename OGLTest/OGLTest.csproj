@@ -62,9 +62,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Blocks\AirBlock.cs" />
+    <Compile Include="DebugUtilites\DebugDrawLine.cs" />
+    <Compile Include="DebugUtilites\DebugDrawManager.cs" />
+    <Compile Include="DebugUtilites\DebugDrawManagerEntry.cs" />
+    <Compile Include="DebugUtilites\IDebugElement.cs" />
     <Compile Include="Engine\BBox.cs" />
     <Compile Include="Engine\BlockController.cs" />
     <Compile Include="Engine\CollisionController.cs" />
+    <Compile Include="Engine\Light.cs" />
+    <Compile Include="GameState.cs" />
     <Compile Include="Renderer\CubeMap.cs" />
     <Compile Include="Renderer\CubeMesh.cs" />
     <Compile Include="Engine\Camera.cs" />
@@ -75,12 +81,12 @@
     <Compile Include="Renderer\TextureCoordinates.cs" />
     <Compile Include="Utilities\ImageDataLoader.cs" />
     <Compile Include="World\Chunk.cs" />
-    <Compile Include="Debug\DebugDrawCube.cs" />
+    <Compile Include="DebugUtilites\DebugDrawCube.cs" />
     <Compile Include="Blocks\DirtBlock.cs" />
     <Compile Include="Utilities\ExtensionMethods.cs" />
     <Compile Include="Blocks\IBlock.cs" />
     <Compile Include="Engine\Ray.cs" />
-    <Compile Include="Utilities\Functions.cs" />
+    <Compile Include="Utilities\Utils.cs" />
     <Compile Include="MyWindow.cs" />
     <Compile Include="Engine\Player.cs" />
     <Compile Include="Program.cs" />
@@ -90,6 +96,7 @@
     <Compile Include="Renderer\Texture.cs" />
     <Compile Include="Renderer\TextureAtlas.cs" />
     <Compile Include="Renderer\Vertex.cs" />
+    <Compile Include="Engine\LightController.cs" />
     <Compile Include="World\World.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +116,13 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Shaders\debug_fragment.s" />
+    <Content Include="Shaders\debug_vertex.s" />
+    <Content Include="Shaders\fragment.s" />
+    <Content Include="Shaders\skybox_fragment.s" />
+    <Content Include="Shaders\skybox_vertex.s" />
+    <Content Include="Shaders\vertex.s" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

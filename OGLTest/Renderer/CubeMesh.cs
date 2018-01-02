@@ -42,11 +42,22 @@ namespace OGLTest
     public class FacesToInclude
     {
       public bool Bottom = true;
+      public Color4 BottomColor = Color4.White;
+
       public bool Top = true;
+      public Color4 TopColor = Color4.White;
+
       public bool Front = true;
+      public Color4 FrontColor = Color4.White;
+
       public bool Back = true;
+      public Color4 BackColor = Color4.White;
+
       public bool Right = true;
+      public Color4 RightColor = Color4.White;
+
       public bool Left = true;
+      public Color4 LeftColor = Color4.White;
     }
     public FacesToInclude IncludeFaces { get; } = new FacesToInclude();
 
@@ -56,22 +67,22 @@ namespace OGLTest
       List<Vertex> vertices = new List<Vertex>();
 
       if (IncludeFaces.Bottom)
-        vertices.AddRange(CreateFace(new[] { 0, 1, 2, 3 }, TextureCoordinates, -Vector3.UnitY));
+        vertices.AddRange(CreateFace(new[] { 0, 1, 2, 3 }, TextureCoordinates, -Vector3.UnitY, IncludeFaces.BottomColor));
 
       if (IncludeFaces.Top)
-        vertices.AddRange(CreateFace(new[] { 4, 7, 6, 5 }, TextureCoordinates, Vector3.UnitY));
+        vertices.AddRange(CreateFace(new[] { 4, 7, 6, 5 }, TextureCoordinates, Vector3.UnitY, IncludeFaces.TopColor));
 
       if (IncludeFaces.Front)
-        vertices.AddRange(CreateFace(new[] { 0, 4, 5, 1 }, TextureCoordinates, -Vector3.UnitZ));
+        vertices.AddRange(CreateFace(new[] { 0, 4, 5, 1 }, TextureCoordinates, -Vector3.UnitZ, IncludeFaces.FrontColor));
 
       if (IncludeFaces.Back)
-        vertices.AddRange(CreateFace(new[] { 2, 6, 7, 3 }, TextureCoordinates, Vector3.UnitZ));
+        vertices.AddRange(CreateFace(new[] { 2, 6, 7, 3 }, TextureCoordinates, Vector3.UnitZ, IncludeFaces.BackColor));
 
       if (IncludeFaces.Right)
-        vertices.AddRange(CreateFace(new[] { 1, 5, 6, 2 }, TextureCoordinates, Vector3.UnitX));
+        vertices.AddRange(CreateFace(new[] { 1, 5, 6, 2 }, TextureCoordinates, Vector3.UnitX, IncludeFaces.RightColor));
 
       if (IncludeFaces.Left)
-        vertices.AddRange(CreateFace(new[] { 3, 7, 4, 0 }, TextureCoordinates, -Vector3.UnitX));
+        vertices.AddRange(CreateFace(new[] { 3, 7, 4, 0 }, TextureCoordinates, -Vector3.UnitX, IncludeFaces.LeftColor));
 
 
       List<Vertex> transformedVertices = new List<Vertex>();
@@ -91,26 +102,26 @@ namespace OGLTest
       return transformedVertices;
     }
 
-    private List<Vertex> CreateFace(int[] positionHandles, TextureCoordinates textureCoordinates, Vector3 normal)
+    private List<Vertex> CreateFace(int[] positionHandles, TextureCoordinates textureCoordinates, Vector3 normal, Color4 color)
     {
       List<Vertex> ret = new List<Vertex>
             {
-                CreateVertex(_blockPoints[positionHandles[0]], textureCoordinates.uLeft, textureCoordinates.vBottom, normal),
-                CreateVertex(_blockPoints[positionHandles[2]], textureCoordinates.uRight, textureCoordinates.vTop, normal),
-                CreateVertex(_blockPoints[positionHandles[1]], textureCoordinates.uLeft, textureCoordinates.vTop, normal),
+                CreateVertex(_blockPoints[positionHandles[0]], textureCoordinates.uLeft, textureCoordinates.vBottom, normal, color),
+                CreateVertex(_blockPoints[positionHandles[2]], textureCoordinates.uRight, textureCoordinates.vTop, normal, color),
+                CreateVertex(_blockPoints[positionHandles[1]], textureCoordinates.uLeft, textureCoordinates.vTop, normal, color),
 
-                CreateVertex(_blockPoints[positionHandles[0]], textureCoordinates.uLeft, textureCoordinates.vBottom, normal),
-                CreateVertex(_blockPoints[positionHandles[3]], textureCoordinates.uRight, textureCoordinates.vBottom, normal),
-                CreateVertex(_blockPoints[positionHandles[2]], textureCoordinates.uRight, textureCoordinates.vTop, normal)
+                CreateVertex(_blockPoints[positionHandles[0]], textureCoordinates.uLeft, textureCoordinates.vBottom, normal, color),
+                CreateVertex(_blockPoints[positionHandles[3]], textureCoordinates.uRight, textureCoordinates.vBottom, normal, color),
+                CreateVertex(_blockPoints[positionHandles[2]], textureCoordinates.uRight, textureCoordinates.vTop, normal, color)
             };
 
       return ret;
     }
 
-    private Vertex CreateVertex(float[] position, float u, float v, Vector3 normal)
+    private Vertex CreateVertex(float[] position, float u, float v, Vector3 normal, Color4 color)
     {
       return new Vertex(new Vector3(position[0], position[1], position[2]), normal,
-          Color, new Vector2(u, v));
+          color, new Vector2(u, v));
     }
   }
 }

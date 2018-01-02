@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using OGLTest.DebugUtilities;
 using OGLTest.Engine;
 using OGLTest.Utilities;
 using OpenTK;
@@ -34,9 +35,6 @@ namespace OGLTest
 
     private Stopwatch _blockDestoryCooldown = new Stopwatch();
 
-    // Debug stuff
-    public DebugDrawCube DebugCube = new DebugDrawCube(Vector3.Zero, Vector3.One);
-
     public Player(Camera camera, CollisionController collisionController, BlockController blockController)
     {
       _collisionController = collisionController;
@@ -56,7 +54,7 @@ namespace OGLTest
       if (_collisionController.CollidesWithWorld(ray, 5.0f, out var hit))
       {
         hit = Utils.TruncateComponents(hit);
-        DebugCube = new DebugDrawCube(hit, hit + new Vector3(1.0f));
+        DebugDrawManager.AddElement(new DebugDrawCube(hit, hit + new Vector3(1.0f)), 100);
 
         if (_playerState.Attack1)
         {
@@ -71,10 +69,6 @@ namespace OGLTest
               _blockDestoryCooldown.Reset();
           }
         }
-      }
-      else
-      {
-        DebugCube = null;
       }
 
       UpdateCamera();

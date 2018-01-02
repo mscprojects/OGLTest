@@ -6,7 +6,7 @@ using OpenTK.Graphics.OpenGL4;
 
 namespace OGLTest
 {
-  public class DebugDrawCube
+  public class DebugDrawCube : IDebugElement
   {
     private Vector3 _min, _max;
     private RenderObject _renderObject;

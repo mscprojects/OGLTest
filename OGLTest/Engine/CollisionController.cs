@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using OGLTest.DebugUtilites;
+using OGLTest.DebugUtilities;
 using OGLTest.Engine;
 using OpenTK;
 
@@ -24,7 +26,7 @@ namespace OGLTest
 
     public bool CollidesWithWorld(Ray ray, float maxDistance, out Vector3 hit)
     {
-      var pointsOnRay = ray.GetPointsOnRay(0.1f, maxDistance);
+      var pointsOnRay = ray.GetPointsOnRay(1.0f, maxDistance);
 
       foreach (var point in pointsOnRay)
       {

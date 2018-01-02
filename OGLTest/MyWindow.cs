@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
+using OGLTest.DebugUtilities;
 using OGLTest.Renderer;
+using OGLTest.Utilities;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
@@ -13,6 +16,7 @@ using OpenTK.Input;
 // TODO:
 // 1. Get a messaging system across the whole system for lower coupling
 // 2. Give each block a coordinate (int!)
+// 3. Proper disposal of RenderObjects
 
 namespace OGLTest
 {
@@ -58,11 +62,25 @@ namespace OGLTest
       _player.HandleKeyboard(keyState);
       _player.HandleMouse(mouseState);
       _player.Update((float) e.Time);
+
+      _world.Update((float) e.Time);
+
+      if (Focused)
+      {
+        var centerPoint = new Point(_width / 2, _height / 2);
+        centerPoint = PointToScreen(centerPoint);
+        OpenTK.Input.Mouse.SetPosition(centerPoint.X, centerPoint.Y);
+      }
+
+      DebugDrawManager.Update();
     }
 
     public override void Exit()
     {
       _program.Delete();
+      _debugProgram.Delete();
+      _skyboxProgram.Delete();
+
       base.Exit();
     }
 
@@ -84,19 +102,21 @@ namespace OGLTest
 
       GL.ClearColor(Color4.Black);
 
+      GameState.Initialize();
+
       _program = new ShaderProgram();
-      _program.AddShader(ShaderType.VertexShader, File.ReadAllText("vertex.s"));
-      _program.AddShader(ShaderType.FragmentShader, File.ReadAllText("fragment.s"));
+      _program.AddShader(ShaderType.VertexShader, ReadShader("vertex.s"));
+      _program.AddShader(ShaderType.FragmentShader, ReadShader("fragment.s"));
       _program.LinkProgram();
 
       _skyboxProgram = new ShaderProgram();
-      _skyboxProgram.AddShader(ShaderType.VertexShader, File.ReadAllText("skybox_vertex.s"));
-      _skyboxProgram.AddShader(ShaderType.FragmentShader, File.ReadAllText("skybox_fragment.s"));
+      _skyboxProgram.AddShader(ShaderType.VertexShader, ReadShader("skybox_vertex.s"));
+      _skyboxProgram.AddShader(ShaderType.FragmentShader, ReadShader("skybox_fragment.s"));
       _skyboxProgram.LinkProgram();
 
       _debugProgram = new ShaderProgram();
-      _debugProgram.AddShader(ShaderType.VertexShader, File.ReadAllText("debug_vertex.s"));
-      _debugProgram.AddShader(ShaderType.FragmentShader, File.ReadAllText("debug_fragment.s"));
+      _debugProgram.AddShader(ShaderType.VertexShader, ReadShader("debug_vertex.s"));
+      _debugProgram.AddShader(ShaderType.FragmentShader, ReadShader("debug_fragment.s"));
       _debugProgram.LinkProgram();
 
       _world = new World();
@@ -109,13 +129,12 @@ namespace OGLTest
 
       GL.PatchParameter(PatchParameterInt.PatchVertices, 3);
 
-      _lightningCube = new DebugDrawCube(_lightSource, _lightSource + Vector3.One);
-
     }
 
-    private Vector3 _lightSource = new Vector3(50, 100, 0);
-    private Vector3 _lightColor = new Vector3(1, 1, 1);
-    private DebugDrawCube _lightningCube;
+    private static string ReadShader(string shaderName)
+    {
+      return File.ReadAllText(@"..\..\Shaders\" + shaderName);
+    }
 
     protected override void OnRenderFrame(FrameEventArgs e)
     {
@@ -139,8 +158,8 @@ namespace OGLTest
       _program.setMat4("projection", _player.Camera.ProjectionMatrix);
       _program.setMat4("model", Matrix4.Identity);
 
-      _program.setVec3("light_color", _lightColor);
-      _program.setVec3("light_position", _lightSource);
+      _program.setVec3("light_color", Vector3.One);
+      _program.setVec3("light_position", new Vector3(0, 10, 50));
       _program.setVec3("camera_position", _player.Position);
 
       GL.DepthMask(true);
@@ -155,10 +174,8 @@ namespace OGLTest
 
       GL.Disable(EnableCap.DepthTest);
       GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
-      _lightningCube.Render();
 
-      var playerDebugCube = _player.DebugCube;
-      playerDebugCube?.Render();
+      DebugDrawManager.Render();
 
       SwapBuffers();
     }

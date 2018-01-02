@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using OGLTest.Utilities;
 using OpenTK;
+using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
 
 namespace OGLTest
@@ -13,7 +14,7 @@ namespace OGLTest
   public class World
   {
     private Dictionary<Vector3, Chunk> _chunkDictionary = new Dictionary<Vector3, Chunk>();
-
+    private LightController _lightController;
     private TextureAtlas _textureAtlas;
 
     public World()
@@ -21,16 +22,22 @@ namespace OGLTest
       _textureAtlas = new TextureAtlas(@"textures\blocks\", 
         new List<string>() {"dirt.png", "sand.png", "stonebrick.png", "hardened_clay_stained_green.png", "hardened_clay_stained_cyan.png"});
 
+      _lightController = new LightController(new CollisionController(this));
+      _lightController.AddLight(new Light
+      {
+        Position = new Vector3(0, 10, 50),
+        Color = Color4.White
+      });
+
       AddChunk(Vector3.Zero);
 
-      AddChunk(Vector3.Zero + Vector3.UnitX);
-      AddChunk(Vector3.Zero + Vector3.UnitY);
-      AddChunk(Vector3.Zero + Vector3.UnitZ);
-      
-      AddChunk(Vector3.Zero - Vector3.UnitX);
-      AddChunk(Vector3.Zero - Vector3.UnitY);
-      AddChunk(Vector3.Zero - Vector3.UnitZ);
+      //AddChunk(Vector3.Zero + Vector3.UnitX);
+      //AddChunk(Vector3.Zero + Vector3.UnitY);
+      //AddChunk(Vector3.Zero + Vector3.UnitZ);
 
+      //AddChunk(Vector3.Zero - Vector3.UnitX);
+      //AddChunk(Vector3.Zero - Vector3.UnitY);
+      //AddChunk(Vector3.Zero - Vector3.UnitZ);
     }
 
     public void Render()
@@ -44,9 +51,9 @@ namespace OGLTest
     public Chunk ChunkAtPosition(Vector3 pos)
     {
       Vector3 chunkPos = new Vector3(
-        Utils.FloorF(pos.X / Chunk.CHUNK_SIZE),
-        Utils.FloorF(pos.Y / Chunk.CHUNK_SIZE),
-        Utils.FloorF(pos.Z / Chunk.CHUNK_SIZE));
+        Utils.Floor(pos.X / Chunk.CHUNK_SIZE),
+        Utils.Floor(pos.Y / Chunk.CHUNK_SIZE),
+        Utils.Floor(pos.Z / Chunk.CHUNK_SIZE));
 
       if (!_chunkDictionary.ContainsKey(chunkPos))
         return null;
@@ -66,7 +73,9 @@ namespace OGLTest
 
     private void AddChunk(Vector3 pos)
     {
-      _chunkDictionary[pos] = new Chunk(pos, _textureAtlas);
+      var chunk = new Chunk(pos, _textureAtlas, _lightController);
+      _chunkDictionary[pos] = chunk;
+      chunk.CreateRenderObject();
     }
 
     public void DestroyBlock(Vector3 pos)
@@ -77,6 +86,11 @@ namespace OGLTest
         return;
 
       chunk.DestroyBlock(pos);
+    }
+
+    public void Update(float time)
+    {
+      _lightController.Update();
     }
   }
 }

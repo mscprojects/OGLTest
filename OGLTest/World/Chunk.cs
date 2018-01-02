@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OGLTest.Utilities;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL4;
@@ -8,16 +9,19 @@ namespace OGLTest
 {
   public class Chunk
   {
-    public const int CHUNK_SIZE = 16;
+    private readonly LightController _lightController;
+
+    public const int CHUNK_SIZE = 8;
     private IBlock[,,] _blocks = new IBlock[CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE];
 
     private Vector3 _chunkPosition;
     private RenderObject _renderObject;
     private TextureAtlas _textureAtlas;
 
-    public Chunk(Vector3 position, TextureAtlas textureAtlas)
+    public Chunk(Vector3 position, TextureAtlas textureAtlas, LightController lightController)
     {
       _textureAtlas = textureAtlas;
+      _lightController = lightController;
       _chunkPosition = position * CHUNK_SIZE;
 
       var random = new Random();
@@ -27,17 +31,15 @@ namespace OGLTest
         {
           for (int z = 0; z < CHUNK_SIZE; z++)
           {
-            if (random.NextDouble() < 0.3)
+            if (random.NextDouble() < 0.1)
               _blocks[x, y, z] = new DirtBlock();
-            else if (random.NextDouble() < 0.6)
+            else if (random.NextDouble() < 0.2)
               _blocks[x, y, z] = new StoneBrickBlock();
             else
               _blocks[x, y, z] = new AirBlock();
           }
         }
       }
-
-      CreateRenderObject();
     }
 
     bool shouldRenderBlock(int x, int y, int z)
@@ -93,19 +95,19 @@ namespace OGLTest
         Position = _chunkPosition + new Vector3(x, y, z)
       };
 
+      // Only Render faces when they are visible
       cubeMesh.IncludeFaces.Top = !GetBlock(x, y + 1, z).render();
       cubeMesh.IncludeFaces.Bottom = !GetBlock(x, y - 1, z).render();
-
       cubeMesh.IncludeFaces.Front = !GetBlock(x, y, z - 1).render();
       cubeMesh.IncludeFaces.Back = !GetBlock(x, y, z + 1).render();
-
       cubeMesh.IncludeFaces.Right = !GetBlock(x + 1, y, z).render();
       cubeMesh.IncludeFaces.Left = !GetBlock(x - 1, y, z).render();
 
-      return cubeMesh.CreateMesh();
+      var vertices = cubeMesh.CreateMesh();
+      return vertices;
     }
 
-    private void CreateRenderObject()
+    public void CreateRenderObject()
     {
       List<Vertex> chunkVertices = new List<Vertex>();
 
